@@ -15,16 +15,19 @@ const BLOCK_SIZE = 20;
 let board = [];
 let score = 0;
 let currentPiece = null;
-let pieces = [];
-let gameInterval = null;
 
-// Load tetromino shapes from external JSON file
-fetch('tetrominoes.json')
-  .then(response => response.json())
-  .then(data => {
-    pieces = data.pieces;
-    initGame();
-  });
+// --- Tetrominoes hardcoded instead of loading JSON ---
+const pieces = [
+  {name:"I", color:"cyan", shape:[[1,1,1,1]]},
+  {name:"O", color:"yellow", shape:[[1,1],[1,1]]},
+  {name:"T", color:"purple", shape:[[0,1,0],[1,1,1]]},
+  {name:"S", color:"green", shape:[[0,1,1],[1,1,0]]},
+  {name:"Z", color:"red", shape:[[1,1,0],[0,1,1]]},
+  {name:"J", color:"blue", shape:[[1,0,0],[1,1,1]]},
+  {name:"L", color:"orange", shape:[[0,0,1],[1,1,1]]}
+];
+
+let gameInterval = null;
 
 // Create an empty board
 function initBoard() {
@@ -179,3 +182,6 @@ function initGame() {
 
 // Restart button only control
 restartBtn.addEventListener('click', initGame);
+
+// --- START GAME IMMEDIATELY ---
+initGame();

@@ -1,21 +1,24 @@
+// --- Main canvas and next piece canvas ---
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
-const nextCanvas = document.getElementById('nextCanvas');
+const nextCanvas = document.getElementById('nextCanvas'); // NEW: canvas for next piece preview
 const nextCtx = nextCanvas.getContext('2d');
 const scoreEl = document.getElementById('score');
 const restartBtn = document.getElementById('restartBtn');
 
+// Game dimensions
 const ROWS = 20;
 const COLS = 10;
 const BLOCK_SIZE = 20;
 
+// Game state
 let board = [];
 let score = 0;
 let currentPiece = null;
-let nextPiece = null;
+let nextPiece = null;       // NEW: store upcoming piece
 let gameInterval = null;
 
-// --- Tetrominoes ---
+// --- Tetrominoes
 const pieces = [
   {name:"I", color:"cyan", shape:[[1,1,1,1]]},
   {name:"O", color:"yellow", shape:[[1,1],[1,1]]},
@@ -26,7 +29,7 @@ const pieces = [
   {name:"L", color:"orange", shape:[[0,0,1],[1,1,1]]}
 ];
 
-// --- Initialize board ---
+// --- Initialize board
 function initBoard() {
   board = Array.from({length: ROWS}, ()=>Array(COLS).fill(0));
 }
@@ -47,6 +50,7 @@ function drawBoard() {
 }
 
 // --- Draw a piece ---
+// UPDATED: accepts a context so we can use it for next piece preview
 function drawPiece(piece, context=ctx) {
   piece.shape.forEach((row,r)=>{
     row.forEach((cell,c)=>{
@@ -60,12 +64,12 @@ function drawPiece(piece, context=ctx) {
   });
 }
 
-// --- Draw next piece with sharp preview ---
+// --- Draw next piece preview
 function drawNextPiece(){
   const dpr = window.devicePixelRatio || 1;
   nextCanvas.width = 80 * dpr;
   nextCanvas.height = 80 * dpr;
-  nextCtx.setTransform(dpr,0,0,dpr,0,0); // scale context
+  nextCtx.setTransform(dpr,0,0,dpr,0,0); // scale context for sharp lines
   nextCtx.clearRect(0,0,nextCanvas.width,nextCanvas.height);
 
   const nextBlockSize = 80 / 4; // logical 4x4 grid
@@ -164,9 +168,9 @@ function dropPiece(){
   if(!movePiece(0,1)){
     merge(currentPiece);
     clearLines();
-    currentPiece = nextPiece;
-    nextPiece = randomPiece();
-    drawNextPiece();
+    currentPiece = nextPiece;        // UPDATED: current becomes next
+    nextPiece = randomPiece();       // UPDATED: generate new next piece
+    drawNextPiece();                 // UPDATED: show new next piece
     if(collide(currentPiece)){
       clearInterval(gameInterval);
       alert("Game Over! Score: "+score);
@@ -186,8 +190,8 @@ function initGame(){
   score=0;
   scoreEl.textContent = score;
   currentPiece=randomPiece();
-  nextPiece=randomPiece();
-  drawNextPiece();
+  nextPiece=randomPiece();  // NEW: initialize next piece
+  drawNextPiece();           // NEW: draw first preview
   if(gameInterval) clearInterval(gameInterval);
   gameInterval = setInterval(()=>{
     dropPiece();
