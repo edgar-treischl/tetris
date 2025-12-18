@@ -1,0 +1,36 @@
+body {
+  font-family: sans-serif;
+  text-align: center;
+  background-color: #222;
+  color: white;
+}
+
+.game-container {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 10px;
+}
+
+canvas {
+  border: 2px solid black;
+  background-color: #111;
+  display: block;
+}
+
+/* Ensure next canvas stays sharp */
+#nextCanvas {
+  width: 80px;
+  height: 80px;
+}
+button {
+  margin-top: 10px;
+  padding: 5px 10px;
+  font-size: 16px;
+}
+
+#gameCanvas {
+  width: 200px;   /* match HTML width */
+  height: 400px;  /* match HTML height */
+}
+
