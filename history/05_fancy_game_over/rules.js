@@ -1,4 +1,4 @@
-// rules.js (updated)
+// rules.js
 export const levelRules = {
   baseInterval: 500,
   linesPerLevel: 5,

@@ -1,5 +1,4 @@
 // ui.js
-// All rendering logic only (no game rules here)
 
 /* ---------- Shared block renderer ---------- */
 

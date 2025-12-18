@@ -11,7 +11,7 @@ import {
 import {
   drawBoard,
   drawPiece,
-  drawGhostPiece,
+  drawGhostPiece, // NEW: function to draw ghost piece
   drawNextPiece
 } from './ui.js';
 
@@ -36,6 +36,7 @@ let gameState = "start";
 
 /* ---------- Helpers ---------- */
 
+// Pick a random tetromino
 function randomPiece() {
   const p = pieces[Math.floor(Math.random() * pieces.length)];
   return {
@@ -46,6 +47,8 @@ function randomPiece() {
   };
 }
 
+// --- NEW: calculate ghost piece position ---
+// Ghost piece is a visual aid showing where the current piece would land if dropped
 function getGhostPiece(piece) {
   const ghost = {
     x: piece.x,
@@ -54,6 +57,7 @@ function getGhostPiece(piece) {
     color: piece.color
   };
 
+  // Move ghost down until it collides
   while (!collide(ghost, board, 0, 1)) {
     ghost.y++;
   }
@@ -135,15 +139,17 @@ function resetInterval() {
   gameInterval = setInterval(() => {
     drop();
     update();
-  }, getDropInterval(lines));
+  }, getDropInterval(lines)); // --- UPDATED: drop interval depends on lines (speed up after 5 lines)
 }
 
 function update() {
   drawBoard(ctx, board, boardSettings.blockSize);
 
   if (gameState === "playing") {
+    // --- NEW: draw ghost piece before the current piece ---
     const ghost = getGhostPiece(currentPiece);
     drawGhostPiece(ctx, ghost, boardSettings.blockSize);
+
     drawPiece(ctx, currentPiece, boardSettings.blockSize);
   }
 }

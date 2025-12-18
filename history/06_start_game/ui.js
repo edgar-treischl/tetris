@@ -1,6 +1,4 @@
 // ui.js
-// All rendering logic only (no game rules here)
-
 /* ---------- Shared block renderer ---------- */
 
 function drawBlock(ctx, x, y, size, color) {
