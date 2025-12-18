@@ -171,10 +171,6 @@ function dropPiece(){
     currentPiece = nextPiece;        // UPDATED: current becomes next
     nextPiece = randomPiece();       // UPDATED: generate new next piece
     drawNextPiece();                 // UPDATED: show new next piece
-    if(collide(currentPiece)){
-      clearInterval(gameInterval);
-      alert("Game Over! Score: "+score);
-    }
   }
 }
 
