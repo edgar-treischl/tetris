@@ -15,7 +15,7 @@ const BLOCK_SIZE = 20;
 let board = [];
 let score = 0;
 let currentPiece = null;
-let nextPiece = null;       // NEW: store upcoming piece
+let nextPiece = null;       // NEW in V1: store upcoming piece
 let gameInterval = null;
 
 // --- Tetrominoes
@@ -50,7 +50,7 @@ function drawBoard() {
 }
 
 // --- Draw a piece ---
-// UPDATED: accepts a context so we can use it for next piece preview
+// UPDATED in V1: accepts a context so we can use it for next piece preview
 function drawPiece(piece, context=ctx) {
   piece.shape.forEach((row,r)=>{
     row.forEach((cell,c)=>{
@@ -164,13 +164,14 @@ function movePiece(dx,dy){
 }
 
 // --- Drop piece ---
+// UPDATED in V1 and kept here: implement nextPiece queue
 function dropPiece(){
   if(!movePiece(0,1)){
     merge(currentPiece);
     clearLines();
-    currentPiece = nextPiece;        // UPDATED: current becomes next
-    nextPiece = randomPiece();       // UPDATED: generate new next piece
-    drawNextPiece();                 // UPDATED: show new next piece
+    currentPiece = nextPiece;        // UPDATED: current piece becomes previous nextPiece
+    nextPiece = randomPiece();       // UPDATED: generate new nextPiece
+    drawNextPiece();                 // UPDATED: refresh next piece preview
   }
 }
 
@@ -181,13 +182,14 @@ function update(){
 }
 
 // --- Init game ---
+// UPDATED in V1: initialize nextPiece
 function initGame(){
   initBoard();
   score=0;
   scoreEl.textContent = score;
   currentPiece=randomPiece();
-  nextPiece=randomPiece();  // NEW: initialize next piece
-  drawNextPiece();           // NEW: draw first preview
+  nextPiece=randomPiece();  // NEW: first next piece
+  drawNextPiece();           // NEW: draw initial preview
   if(gameInterval) clearInterval(gameInterval);
   gameInterval = setInterval(()=>{
     dropPiece();
@@ -196,6 +198,7 @@ function initGame(){
 }
 
 // --- Keyboard controls ---
+// NEW in V2: interactive controls for moving and rotating pieces
 document.addEventListener('keydown', e=>{
   if(e.key==='ArrowLeft') movePiece(-1,0);
   if(e.key==='ArrowRight') movePiece(1,0);

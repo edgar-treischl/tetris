@@ -1,3 +1,45 @@
+/* =====================================================
+   MINI CSS SELECTOR GUIDE
+   =====================================================
+
+   1. TAG SELECTOR
+   ----------------
+   - Targets all elements of a given HTML tag.
+   - Example: style all <canvas> elements
+     canvas {
+       border: 1px solid black;
+     }
+
+   2. CLASS SELECTOR
+   ------------------
+   - Targets elements with a specific class.
+   - Prefix with a dot (.)
+   - Can be applied to multiple elements.
+   - Example: style all elements with class="block"
+     .block {
+       background-color: blue;
+     }
+
+   3. ID SELECTOR
+   ----------------
+   - Targets a single element with a unique ID.
+   - Prefix with a hash (#)
+   - Each ID should be unique per page.
+   - Example: style the element with id="nextCanvas"
+     #nextCanvas {
+       width: 80px;
+       height: 80px;
+       border: 1px solid #111;
+     }
+
+   =====================================================
+   TIP:
+   - Use tag selectors for general element styling.
+   - Use class selectors when multiple elements share the same style.
+   - Use ID selectors for unique elements that need individual styling.
+*/
+
+
 body {
   margin: 0;
   background: linear-gradient(#001020, #000814);
@@ -24,6 +66,7 @@ canvas {
   border: 4px solid #0a2cff;
   box-shadow: 0 0 20px #0018ff;
 }
+
 
 #nextCanvas {
   border-color: #00bfff;

@@ -1,9 +1,19 @@
-// tetra.js
+// ===========================
+// TETRIS MODULAR VERSION
+// ===========================
+
+// --- Module imports ---
+// Instead of having everything in one file, the game logic is split into modules:
+// pieces.js       → defines all Tetromino shapes and colors
+// board.js        → board settings and board initialization
+// rules.js        → collision, merge, line clearing, rotation
+// ui.js           → drawing functions for main board, falling piece, next piece
 import { pieces } from './pieces.js';
 import { boardSettings, initBoard } from './board.js';
 import { collide, merge, clearLines, rotate } from './rules.js';
 import { drawBoard, drawPiece, drawNextPiece } from './ui.js';
 
+// --- Canvas & UI elements ---
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 const nextCanvas = document.getElementById('nextCanvas');
@@ -11,9 +21,15 @@ const nextCtx = nextCanvas.getContext('2d');
 const scoreEl = document.getElementById('score');
 const restartBtn = document.getElementById('restartBtn');
 
+// --- Game state ---
 let board, currentPiece, nextPiece, score, gameInterval;
 
+// ===========================
+// GAME FUNCTIONS
+// ===========================
+
 // --- Random piece ---
+// Same as before, now uses boardSettings from board module
 function randomPiece() {
   const index = Math.floor(Math.random() * pieces.length);
   const p = pieces[index];
@@ -26,6 +42,7 @@ function randomPiece() {
 }
 
 // --- Move piece ---
+// Uses collide from rules.js
 function movePiece(dx, dy) {
   if (!collide(currentPiece, board, dx, dy)) {
     currentPiece.x += dx;
@@ -36,6 +53,7 @@ function movePiece(dx, dy) {
 }
 
 // --- Drop piece ---
+// Now fully modular: merge and clearLines come from rules.js
 function dropPiece() {
   if (!movePiece(0,1)) {
     merge(currentPiece, board);
@@ -43,7 +61,7 @@ function dropPiece() {
     scoreEl.textContent = score;
     currentPiece = nextPiece;
     nextPiece = randomPiece();
-    drawNextPiece(nextCtx, nextPiece);
+    drawNextPiece(nextCtx, nextPiece);  // uses ui.js
     if (collide(currentPiece, board)) {
       clearInterval(gameInterval);
       alert("Game Over! Score: "+score);
@@ -51,20 +69,20 @@ function dropPiece() {
   }
 }
 
-// --- Update ---
+// --- Update / Draw ---
 function update() {
-  drawBoard(ctx, board, boardSettings.blockSize);
-  drawPiece(ctx, currentPiece, boardSettings.blockSize);
+  drawBoard(ctx, board, boardSettings.blockSize);   // main board
+  drawPiece(ctx, currentPiece, boardSettings.blockSize); // current piece
 }
 
-// --- Init game ---
+// --- Initialize game ---
 function initGame() {
-  board = initBoard();
+  board = initBoard();          // from board.js
   score = 0;
   scoreEl.textContent = score;
   currentPiece = randomPiece();
   nextPiece = randomPiece();
-  drawNextPiece(nextCtx, nextPiece);
+  drawNextPiece(nextCtx, nextPiece);  // first preview
   if (gameInterval) clearInterval(gameInterval);
   gameInterval = setInterval(() => {
     dropPiece();
@@ -72,17 +90,18 @@ function initGame() {
   }, 500);
 }
 
-// --- Keyboard ---
+// --- Keyboard controls ---
+// Same as Version 2 but now calls modular rotate from rules.js
 document.addEventListener('keydown', e => {
   if (e.key === 'ArrowLeft') movePiece(-1,0);
   if (e.key === 'ArrowRight') movePiece(1,0);
   if (e.key === 'ArrowDown') dropPiece();
-  if (e.key === 'ArrowUp') rotate(currentPiece, board);
+  if (e.key === 'ArrowUp') rotate(currentPiece, board); // modular
   update();
 });
 
 // --- Restart ---
 restartBtn.addEventListener('click', initGame);
 
-// --- Start ---
+// --- Start game ---
 initGame();

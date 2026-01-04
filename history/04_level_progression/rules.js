@@ -1,5 +1,15 @@
-// rules.js
 // --- Level progression rules added ---
+// ===========================
+// rules.js — MODULAR GAME RULES
+// ===========================
+// This file contains:
+// 1. Collision, merge, line clearing, rotation (from previous modular version)
+// 2. NEW: Level progression rules (levelRules, getLevel, getDropInterval)
+//    - Allows the game to speed up as the player clears lines
+//    - Currently ready for integration in the main game loop
+
+
+
 // These define how the game speeds up as the player clears lines
 export const levelRules = {
   baseInterval: 500,     // starting drop interval in ms

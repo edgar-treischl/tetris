@@ -15,17 +15,18 @@ const ctx = canvas.getContext('2d');
 const nextCtx = document.getElementById('nextCanvas').getContext('2d');
 
 const scoreEl = document.getElementById('score');
-const levelEl = document.getElementById('level');
-const linesEl = document.getElementById('lines');
+const levelEl = document.getElementById('level'); // NEW: display current level
+const linesEl = document.getElementById('lines'); // NEW: display total lines
 const restartBtn = document.getElementById('restartBtn');
-const gameOverEl = document.getElementById('gameOver');
+const gameOverEl = document.getElementById('gameOver'); // NEW: element for fancy game over message
 
 let board, currentPiece, nextPiece;
 let score = 0;
 let lines = 0;
 let gameInterval = null;
-let isGameOver = false;
+let isGameOver = false; // NEW: game state flag
 
+// --- Random piece ---
 function randomPiece() {
   const p = pieces[Math.floor(Math.random() * pieces.length)];
   return {
@@ -36,8 +37,9 @@ function randomPiece() {
   };
 }
 
+// --- Move piece ---
 function move(dx, dy) {
-  if (isGameOver) return false;
+  if (isGameOver) return false; // UPDATED: prevent moving after game over
   if (!collide(currentPiece, board, dx, dy)) {
     currentPiece.x += dx;
     currentPiece.y += dy;
@@ -46,61 +48,67 @@ function move(dx, dy) {
   return false;
 }
 
+// --- Game over handler ---
 function endGame() {
-  clearInterval(gameInterval);
-  isGameOver = true;
-  gameOverEl.classList.remove('hidden');
+  clearInterval(gameInterval);      // stop falling pieces
+  isGameOver = true;                // NEW: set game state
+  gameOverEl.classList.remove('hidden'); // NEW: show fancy game over element
 }
 
+// --- Land piece ---
 function landPiece() {
   merge(currentPiece, board);
   const cleared = clearLines(board);
-  lines += cleared;
+  lines += cleared;                 // UPDATED: track total lines
   score += cleared * 10;
 
   scoreEl.textContent = score;
-  linesEl.textContent = lines;
-  levelEl.textContent = getLevel(lines);
+  linesEl.textContent = lines;      // UPDATED: show total lines
+  levelEl.textContent = getLevel(lines); // UPDATED: show current level
 
-  resetInterval();
+  resetInterval();                   // UPDATED: adjust drop speed dynamically
 
   currentPiece = nextPiece;
   nextPiece = randomPiece();
   drawNextPiece(nextCtx, nextPiece);
 
   if (collide(currentPiece, board)) {
-    endGame();
+    endGame();                       // UPDATED: call new game over handler
   }
 }
 
+// --- Drop piece ---
 function drop() {
   if (!move(0, 1)) landPiece();
 }
 
+// --- Reset interval based on current level / lines ---
 function resetInterval() {
   clearInterval(gameInterval);
   gameInterval = setInterval(() => {
     drop();
     update();
-  }, getDropInterval(lines));
+  }, getDropInterval(lines));       // UPDATED: speed now depends on lines cleared
 }
 
+// --- Draw/update board ---
 function update() {
   drawBoard(ctx, board, boardSettings.blockSize);
   drawPiece(ctx, currentPiece, boardSettings.blockSize);
 }
 
+// --- Initialize game ---
 function initGame() {
   board = initBoard();
   score = 0;
   lines = 0;
-  isGameOver = false;
+  isGameOver = false;               // NEW: reset game state
 
   scoreEl.textContent = 0;
-  linesEl.textContent = 0;
-  levelEl.textContent = 1;
+  linesEl.textContent = 0;          // NEW: reset lines display
+  levelEl.textContent = 1;          // NEW: reset level display
 
-  gameOverEl.classList.add('hidden');
+  gameOverEl.classList.add('hidden'); // NEW: hide game over element
 
   currentPiece = randomPiece();
   nextPiece = randomPiece();
@@ -110,8 +118,9 @@ function initGame() {
   update();
 }
 
+// --- Keyboard controls ---
 document.addEventListener('keydown', e => {
-  if (isGameOver) return;
+  if (isGameOver) return;           // UPDATED: ignore input after game over
 
   if (e.key === 'ArrowLeft') move(-1, 0);
   if (e.key === 'ArrowRight') move(1, 0);
@@ -121,6 +130,7 @@ document.addEventListener('keydown', e => {
   update();
 });
 
+// --- Restart button ---
 restartBtn.addEventListener('click', initGame);
 
 initGame();

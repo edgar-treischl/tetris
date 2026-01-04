@@ -18,16 +18,17 @@ const scoreEl = document.getElementById('score');
 const levelEl = document.getElementById('level');
 const linesEl = document.getElementById('lines');
 
-const startScreen = document.getElementById('startScreen');
-const gameOverScreen = document.getElementById('gameOver');
-const startBtn = document.getElementById('startBtn');
+// ---------- NEW: start screen elements ----------
+const startScreen = document.getElementById('startScreen'); // NEW
+const gameOverScreen = document.getElementById('gameOver'); // reused from previous version
+const startBtn = document.getElementById('startBtn');       // NEW button for starting game
 const restartBtn = document.getElementById('restartBtn');
 
 let board, currentPiece, nextPiece;
 let score = 0;
 let lines = 0;
 let gameInterval = null;
-let gameState = "start"; // start | playing | gameover
+let gameState = "start"; // UPDATED: replaced isGameOver with a more flexible state: start | playing | gameover
 
 /* ---------- Helpers ---------- */
 
@@ -41,18 +42,20 @@ function randomPiece() {
   };
 }
 
+// ---------- NEW: startGame() replaces initGame() ----------
 function startGame() {
   board = initBoard();
   score = 0;
   lines = 0;
-  gameState = "playing";
+  gameState = "playing"; // UPDATED: now tracks playing state
 
   scoreEl.textContent = 0;
   linesEl.textContent = 0;
   levelEl.textContent = 1;
 
-  startScreen.classList.add('hidden');
-  gameOverScreen.classList.add('hidden');
+  // ---------- NEW: hide start screen when game begins ----------
+  startScreen.classList.add('hidden'); 
+  gameOverScreen.classList.add('hidden'); // hide game over screen too
 
   currentPiece = randomPiece();
   nextPiece = randomPiece();
@@ -62,16 +65,17 @@ function startGame() {
   update();
 }
 
+// ---------- endGame() updated for gameState ----------
 function endGame() {
   clearInterval(gameInterval);
-  gameState = "gameover";
-  gameOverScreen.classList.remove('hidden');
+  gameState = "gameover";                // UPDATED: replaces isGameOver
+  gameOverScreen.classList.remove('hidden'); // NEW: shows the fancy game over screen
 }
 
 /* ---------- Movement ---------- */
 
 function move(dx, dy) {
-  if (gameState !== "playing") return false;
+  if (gameState !== "playing") return false; // UPDATED: uses gameState check
 
   if (!collide(currentPiece, board, dx, dy)) {
     currentPiece.x += dx;
@@ -99,7 +103,7 @@ function landPiece() {
   drawNextPiece(nextCtx, nextPiece);
 
   if (collide(currentPiece, board)) {
-    endGame();
+    endGame(); // UPDATED: uses new endGame logic
   }
 }
 
@@ -119,7 +123,7 @@ function resetInterval() {
 
 function update() {
   drawBoard(ctx, board, boardSettings.blockSize);
-  if (gameState === "playing") {
+  if (gameState === "playing") {       // UPDATED: only draw current piece if playing
     drawPiece(ctx, currentPiece, boardSettings.blockSize);
   }
 }
@@ -127,7 +131,7 @@ function update() {
 /* ---------- Input ---------- */
 
 document.addEventListener('keydown', e => {
-  if (gameState !== "playing") return;
+  if (gameState !== "playing") return; // UPDATED: block input if not playing
 
   if (e.key === 'ArrowLeft') move(-1, 0);
   if (e.key === 'ArrowRight') move(1, 0);
@@ -139,10 +143,12 @@ document.addEventListener('keydown', e => {
 
 /* ---------- Buttons ---------- */
 
-startBtn.addEventListener('click', startGame);
-restartBtn.addEventListener('click', startGame);
+// ---------- NEW: start button ----------
+startBtn.addEventListener('click', startGame); 
+restartBtn.addEventListener('click', startGame); // UPDATED: restart now also calls startGame()
 
 /* ---------- Initial draw ---------- */
 
+// ---------- NEW: initial board draw for start screen ----------
 board = initBoard();
 drawBoard(ctx, board, boardSettings.blockSize);
